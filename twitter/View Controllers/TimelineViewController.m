@@ -8,8 +8,16 @@
 
 #import "TimelineViewController.h"
 #import "APIManager.h"
+#import "TweetTableViewCell.h"
+#import "UIImageView+AFNetworking.h"
 
-@interface TimelineViewController ()
+#define tweetsDisplayedInFeed 20
+
+@interface TimelineViewController () <UITableViewDataSource, UITableViewDelegate>
+
+@property (weak, nonatomic) IBOutlet UITableView *feedTableView;
+
+@property (strong, nonatomic) NSArray *tweets;
 
 @end
 
@@ -18,12 +26,18 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.feedTableView.dataSource = self;
+    self.feedTableView.delegate = self;
+    
     // Get timeline
     [[APIManager shared] getHomeTimelineWithCompletion:^(NSArray *tweets, NSError *error) {
         if (tweets) {
+            self.tweets = tweets;
+            [self.feedTableView reloadData];
             NSLog(@"😎😎😎 Successfully loaded home timeline");
-            for (NSDictionary *dictionary in tweets) {
-                NSString *text = dictionary[@"text"];
+            
+            for (Tweet *indivTweet in tweets) {
+                NSString *text = indivTweet.text;
                 NSLog(@"%@", text);
             }
         } else {
@@ -37,6 +51,26 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return tweetsDisplayedInFeed;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    TweetTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TweetTableViewCell"];
+    
+    Tweet *currTweet = self.tweets[indexPath.row];
+
+    [cell.tweeterProfileImageView setImageWithURL:currTweet.user.profilePictureURL];
+    
+    cell.tweeterNameLabel.text = currTweet.user.name;
+    cell.tweeterScreenNameLabel.text = currTweet.user.screenName;
+    cell.dateCreatedLabel.text = currTweet.createdAtString;
+    cell.tweetTextLabel.text = currTweet.text;
+    cell.retweetCountLabel.text = [NSString stringWithFormat:@"%d", currTweet.retweetCount];
+    cell.favoriteCountLabel.text = [NSString stringWithFormat:@"%d", currTweet.favoriteCount];
+    
+    return cell;
+}
 /*
 #pragma mark - Navigation
 
