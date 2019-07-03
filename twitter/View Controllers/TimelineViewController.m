@@ -29,6 +29,10 @@
     self.feedTableView.dataSource = self;
     self.feedTableView.delegate = self;
     
+    UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
+    [refreshControl addTarget:self action:@selector(beginRefresh:) forControlEvents:UIControlEventValueChanged];
+    [self.feedTableView insertSubview:refreshControl atIndex:0];
+    
     // Get timeline
     [[APIManager shared] getHomeTimelineWithCompletion:^(NSArray *tweets, NSError *error) {
         if (tweets) {
@@ -70,6 +74,26 @@
     cell.favoriteCountLabel.text = [NSString stringWithFormat:@"%d", currTweet.favoriteCount];
     
     return cell;
+}
+
+- (void)beginRefresh:(UIRefreshControl *)refreshControl {
+    
+    [[APIManager shared] getHomeTimelineWithCompletion:^(NSArray *tweets, NSError *error) {
+        if (tweets) {
+            self.tweets = tweets;
+            [self.feedTableView reloadData];
+            NSLog(@"😎😎😎 Successfully loaded home timeline");
+            
+            for (Tweet *indivTweet in tweets) {
+                NSString *text = indivTweet.text;
+                NSLog(@"%@", text);
+            }
+        } else {
+            NSLog(@"😫😫😫 Error getting home timeline: %@", error.localizedDescription);
+        }
+    }];
+    // Tell the refreshControl to stop spinning
+    [refreshControl endRefreshing];
 }
 /*
 #pragma mark - Navigation
