@@ -10,18 +10,22 @@
 #import "APIManager.h"
 #import "TweetTableViewCell.h"
 #import "UIImageView+AFNetworking.h"
+#import "ComposeViewController.h"
 
 #define tweetsDisplayedInFeed 20
 
-@interface TimelineViewController () <UITableViewDataSource, UITableViewDelegate>
+@interface TimelineViewController () <ComposeViewControllerDelegate, UITableViewDataSource, UITableViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *feedTableView;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *composeBarButton;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *logoutBarButton;
 
 @property (strong, nonatomic) NSArray *tweets;
 
 @end
 
 @implementation TimelineViewController
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -34,20 +38,7 @@
     [self.feedTableView insertSubview:refreshControl atIndex:0];
     
     // Get timeline
-    [[APIManager shared] getHomeTimelineWithCompletion:^(NSArray *tweets, NSError *error) {
-        if (tweets) {
-            self.tweets = tweets;
-            [self.feedTableView reloadData];
-            NSLog(@"😎😎😎 Successfully loaded home timeline");
-            
-            for (Tweet *indivTweet in tweets) {
-                NSString *text = indivTweet.text;
-                NSLog(@"%@", text);
-            }
-        } else {
-            NSLog(@"😫😫😫 Error getting home timeline: %@", error.localizedDescription);
-        }
-    }];
+    [self getTweets];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -64,6 +55,7 @@
     
     Tweet *currTweet = self.tweets[indexPath.row];
 
+    
     [cell.tweeterProfileImageView setImageWithURL:currTweet.user.profilePictureURL];
     
     cell.tweeterNameLabel.text = currTweet.user.name;
@@ -77,33 +69,37 @@
 }
 
 - (void)beginRefresh:(UIRefreshControl *)refreshControl {
-    
+    [self getTweets];
+    // Tell the refreshControl to stop spinning
+    [refreshControl endRefreshing];
+}
+
+- (void) getTweets {
     [[APIManager shared] getHomeTimelineWithCompletion:^(NSArray *tweets, NSError *error) {
         if (tweets) {
             self.tweets = tweets;
             [self.feedTableView reloadData];
-            NSLog(@"😎😎😎 Successfully loaded home timeline");
-            
-            for (Tweet *indivTweet in tweets) {
-                NSString *text = indivTweet.text;
-                NSLog(@"%@", text);
-            }
         } else {
             NSLog(@"😫😫😫 Error getting home timeline: %@", error.localizedDescription);
         }
     }];
-    // Tell the refreshControl to stop spinning
-    [refreshControl endRefreshing];
 }
-/*
+
+- (void)didTweet:(Tweet *)tweet {
+    [self getTweets];
+}
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    UINavigationController *navigationController = [segue destinationViewController];
+    ComposeViewController *composeController = (ComposeViewController*)navigationController.topViewController;
+    composeController.delegate = self;
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
 }
-*/
+
 
 
 @end

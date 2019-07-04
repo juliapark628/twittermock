@@ -25,6 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (strong, nonatomic) Tweet *tweet;
 
+- (void)refreshDataAtCell:(TweetTableViewCell*)cell withTweet:(Tweet*)currTweet; 
+
 @end
 
 NS_ASSUME_NONNULL_END
