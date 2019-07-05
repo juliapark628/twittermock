@@ -11,6 +11,8 @@
 #import "TweetTableViewCell.h"
 #import "UIImageView+AFNetworking.h"
 #import "ComposeViewController.h"
+#import "AppDelegate.h"
+#import "LoginViewController.h"
 
 #define tweetsDisplayedInFeed 20
 
@@ -88,6 +90,17 @@
 - (void)didTweet:(Tweet *)tweet {
     [self getTweets];
 }
+
+- (IBAction)logoutButtonClicked:(id)sender {
+    AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    LoginViewController *loginViewController = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+    appDelegate.window.rootViewController = loginViewController;
+    
+    [[APIManager shared] logout];
+}
+
 
 #pragma mark - Navigation
 

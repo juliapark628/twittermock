@@ -29,16 +29,19 @@
 }
 
 - (IBAction)favoriteButtonClicked:(id)sender {
+    NSLog(@"%@", self.tweet);
     self.tweet.favorited = YES;
     NSLog(@"%d", self.tweet.favoriteCount); 
     self.tweet.favoriteCount += 1;
     Tweet* tweetPointer = self.tweet;
     NSLog(@"%d", self.tweet.favoriteCount);
     [self refreshDataAtCell:self withTweet:tweetPointer];
+    
 }
 
 - (void)refreshDataAtCell:(TweetTableViewCell*)cell withTweet:(Tweet*)currTweet {
     NSLog(@"%@", currTweet);
+    /*
     [cell.tweeterProfileImageView setImageWithURL:currTweet.user.profilePictureURL];
     
     cell.tweeterNameLabel.text = currTweet.user.name;
@@ -46,6 +49,7 @@
     cell.dateCreatedLabel.text = currTweet.createdAtString;
     cell.tweetTextLabel.text = currTweet.text;
     cell.retweetCountLabel.text = [NSString stringWithFormat:@"%d", currTweet.retweetCount];
+     */
     cell.favoriteCountLabel.text = [NSString stringWithFormat:@"%d", currTweet.favoriteCount]; 
 }
 

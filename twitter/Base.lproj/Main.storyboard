@@ -130,7 +130,6 @@
                                                     <state key="selected" image="favor-icon-red"/>
                                                     <connections>
                                                         <action selector="favoriteButtonClicked:" destination="Mto-5i-Ovk" eventType="touchUpInside" id="ho0-KK-TqE"/>
-                                                        <action selector="favoriteButtonClicked:" destination="Lbl-k5-U4i" eventType="touchUpInside" id="klM-Qg-R04"/>
                                                     </connections>
                                                 </button>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="username" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C8k-G3-sdP">
@@ -173,7 +172,11 @@
                         <viewLayoutGuide key="safeArea" id="ugE-Ul-H9I"/>
                     </view>
                     <navigationItem key="navigationItem" title="Home Timeline" id="MOc-fV-EZE">
-                        <barButtonItem key="leftBarButtonItem" title="Logout" id="wXh-oU-Q2B"/>
+                        <barButtonItem key="leftBarButtonItem" title="Logout" id="wXh-oU-Q2B">
+                            <connections>
+                                <action selector="logoutButtonClicked:" destination="Lbl-k5-U4i" id="Gsc-gg-fU4"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="compose" id="BUr-nk-76z">
                             <connections>
                                 <segue destination="PfW-9l-VDB" kind="presentation" id="wj1-Bd-5ML"/>

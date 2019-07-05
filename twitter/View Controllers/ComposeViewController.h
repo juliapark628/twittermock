@@ -15,7 +15,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)didTweet:(Tweet *)tweet;
 
-
 @end
 
 
