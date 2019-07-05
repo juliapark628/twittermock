@@ -88,7 +88,13 @@ static NSString * const consumerSecret = @"Peg1U5BHZCMKQrerQHW3Ymcjpm6CprPt3aH21
 }
 
 - (void)toggleFavorite:(Tweet *)tweet completion:(void (^)(Tweet *, NSError *)) completion{
-    NSString *urlString = [self getEndpointToToggle:tweet.favorited];
+    NSString *urlString;
+    if (!tweet.favorited) {
+        urlString =  @"1.1/favorites/create.json";
+    }
+    else {
+        urlString = @"1.1/favorites/destroy.json";
+    }
     NSDictionary *parameters = @{@"id": tweet.idStr};
     [self POST:urlString parameters:parameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, NSDictionary *  _Nullable tweetDictionary) {
         Tweet *tweet = [[Tweet alloc]initWithDictionary:tweetDictionary];
@@ -98,13 +104,23 @@ static NSString * const consumerSecret = @"Peg1U5BHZCMKQrerQHW3Ymcjpm6CprPt3aH21
     }];
 }
 
--(NSString *)getEndpointToToggle:(BOOL)tweetCurrFavoriteState {
-    if (!tweetCurrFavoriteState) {
-        return @"1.1/favorites/create.json";
+- (void)toggleRetweet:(Tweet *)tweet completion:(void (^)(Tweet *, NSError *)) completion{
+    NSString *urlString;
+    if (!tweet.retweeted) {
+        urlString = [NSString stringWithFormat:@"1.1/statuses/retweet/%@.json", tweet.idStr];
     }
     else {
-        return @"1.1/favorites/destroy.json";
+        urlString = [NSString stringWithFormat:@"1.1/statuses/unretweet/%@.json", tweet.idStr];
     }
+
+    NSDictionary *parameters = @{@"id": tweet.idStr};
+    [self POST:urlString parameters:parameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, NSDictionary *  _Nullable tweetDictionary) {
+        Tweet *tweet = [[Tweet alloc]initWithDictionary:tweetDictionary];
+        completion(tweet, nil);
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        completion(nil, error);
+    }];
 }
+
 
 @end

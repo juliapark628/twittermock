@@ -25,39 +25,47 @@
 
 
 - (IBAction)retweetButtonClicked:(id)sender {
-    self.tweet.retweeted = YES;
-    self.tweet.retweetCount += 1;
+    [[APIManager shared] toggleRetweet:self.tweet completion:^(Tweet *tweet, NSError *error) {
+        if(error){
+            NSLog(@"Error (un)retweeting tweet: %@", error.localizedDescription);
+        }
+        else {
+            NSLog(@"Successfully (un)retweeted the following Tweet: %@", tweet.text);
+        }
+    }];
+    
+    if (self.tweet.retweeted == NO) {
+        self.tweet.retweeted = YES;
+        self.tweet.retweetCount += 1;
+    }
+    else {
+        self.tweet.retweeted = NO;
+        self.tweet.retweetCount -= 1;
+    }
+    
+    [self refreshDataAtCell:self withTweet:self.tweet];
 }
 
 - (IBAction)favoriteButtonClicked:(id)sender {
+    [[APIManager shared] toggleFavorite:self.tweet completion:^(Tweet *tweet, NSError *error) {
+        if(error){
+            NSLog(@"Error (un)favoriting tweet: %@", error.localizedDescription);
+        }
+        else {
+            NSLog(@"Successfully (un)favorited the following Tweet: %@", tweet.text);
+        }
+    }];
+        
     if (self.tweet.favorited == NO) {
-        [[APIManager shared] toggleFavorite:self.tweet completion:^(Tweet *tweet, NSError *error) {
-            if(error){
-                NSLog(@"Error favoriting tweet: %@", error.localizedDescription);
-            }
-            else{
-                NSLog(@"Successfully favorited the following Tweet: %@", tweet.text);
-            }
-        }];
         self.tweet.favorited = YES;
         self.tweet.favoriteCount += 1;
-        [self refreshDataAtCell:self withTweet:self.tweet];
-
     }
     else {
-        [[APIManager shared] toggleFavorite:self.tweet completion:^(Tweet *tweet, NSError *error) {
-            if(error){
-                NSLog(@"Error un-favoriting tweet: %@", error.localizedDescription);
-            }
-            else{
-                NSLog(@"Successfully un-favorited the following Tweet: %@", tweet.text);
-            }
-        }];
         self.tweet.favorited = NO;
         self.tweet.favoriteCount -= 1;
-        [self refreshDataAtCell:self withTweet:self.tweet];
-
     }
+    
+    [self refreshDataAtCell:self withTweet:self.tweet];
 }
 
 - (void)refreshDataAtCell:(TweetTableViewCell*)cell withTweet:(Tweet*)currTweet {
@@ -77,6 +85,13 @@
     }
     else {
         [cell.favoriteButton setSelected:YES];
+    }
+    
+    if (self.tweet.retweeted == NO) {
+        [cell.retweetButton setSelected:NO];
+    }
+    else {
+        [cell.retweetButton setSelected:YES];
     }
 }
 
