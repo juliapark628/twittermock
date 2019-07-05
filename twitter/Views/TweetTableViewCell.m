@@ -29,18 +29,13 @@
 }
 
 - (IBAction)favoriteButtonClicked:(id)sender {
-    NSLog(@"%@", self.tweet);
     self.tweet.favorited = YES;
-    NSLog(@"%d", self.tweet.favoriteCount); 
     self.tweet.favoriteCount += 1;
-    Tweet* tweetPointer = self.tweet;
-    NSLog(@"%d", self.tweet.favoriteCount);
-    [self refreshDataAtCell:self withTweet:tweetPointer];
+    [self refreshDataAtCell:self withTweet:self.tweet];
     
 }
 
 - (void)refreshDataAtCell:(TweetTableViewCell*)cell withTweet:(Tweet*)currTweet {
-    NSLog(@"%@", currTweet);
     /*
     [cell.tweeterProfileImageView setImageWithURL:currTweet.user.profilePictureURL];
     

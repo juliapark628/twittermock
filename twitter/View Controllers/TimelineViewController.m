@@ -57,9 +57,9 @@
     
     Tweet *currTweet = self.tweets[indexPath.row];
 
+    cell.tweet = currTweet;
     
     [cell.tweeterProfileImageView setImageWithURL:currTweet.user.profilePictureURL];
-    
     cell.tweeterNameLabel.text = currTweet.user.name;
     cell.tweeterScreenNameLabel.text = currTweet.user.screenName;
     cell.dateCreatedLabel.text = currTweet.createdAtString;
