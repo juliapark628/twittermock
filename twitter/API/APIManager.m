@@ -87,4 +87,24 @@ static NSString * const consumerSecret = @"Peg1U5BHZCMKQrerQHW3Ymcjpm6CprPt3aH21
     }];
 }
 
+- (void)toggleFavorite:(Tweet *)tweet completion:(void (^)(Tweet *, NSError *)) completion{
+    NSString *urlString = [self getEndpointToToggle:tweet.favorited];
+    NSDictionary *parameters = @{@"id": tweet.idStr};
+    [self POST:urlString parameters:parameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, NSDictionary *  _Nullable tweetDictionary) {
+        Tweet *tweet = [[Tweet alloc]initWithDictionary:tweetDictionary];
+        completion(tweet, nil);
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        completion(nil, error);
+    }];
+}
+
+-(NSString *)getEndpointToToggle:(BOOL)tweetCurrFavoriteState {
+    if (!tweetCurrFavoriteState) {
+        return @"1.1/favorites/create.json";
+    }
+    else {
+        return @"1.1/favorites/destroy.json";
+    }
+}
+
 @end

@@ -59,13 +59,7 @@
 
     cell.tweet = currTweet;
     
-    [cell.tweeterProfileImageView setImageWithURL:currTweet.user.profilePictureURL];
-    cell.tweeterNameLabel.text = currTweet.user.name;
-    cell.tweeterScreenNameLabel.text = currTweet.user.screenName;
-    cell.dateCreatedLabel.text = currTweet.createdAtString;
-    cell.tweetTextLabel.text = currTweet.text;
-    cell.retweetCountLabel.text = [NSString stringWithFormat:@"%d", currTweet.retweetCount];
-    cell.favoriteCountLabel.text = [NSString stringWithFormat:@"%d", currTweet.favoriteCount];
+    [cell refreshDataAtCell:cell withTweet:currTweet];
     
     return cell;
 }
